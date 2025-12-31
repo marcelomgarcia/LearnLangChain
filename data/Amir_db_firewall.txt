@@ -1,0 +1,54 @@
+Dear Amir
+
+Thank you for adding MySQL to the firewall.
+
+I'm tryng to access the MySQL server but it's still not working:
+
+```
+garcm0b@KW20207:~$ mysql -h 10.127.6.29 -u irts -p test_irts
+Enter password:
+ERROR 2003 (HY000): Can't connect to MySQL server on '10.127.6.29:3306' (110)
+garcm0b@KW20207:~$
+```
+
+This means the client can't access the server. The connection time out:
+
+```
+connect(4, {sa_family=AF_INET, sin_port=htons(3306), sin_addr=inet_addr("10.127.6.29")}, 16) = -1 ETIMEDOUT (Connection timed out)
+shutdown(4, SHUT_RDWR)                  = -1 ENOTCONN (Transport endpoint is not connected)
+```
+
+If I test from a machine (lthlibtest/10.127.4.56) inside the datacenter it works:
+
+```
+a-garcm0b@lthlibtest:~$ mysql -h 10.127.6.29 -u irts -p test_irts
+Enter password:
+(...)
+Your MySQL connection id is 185962
+Server version: 8.0.43-0ubuntu0.22.04.2 (Ubuntu)
+```
+
+I opened the port 3306 on our workstation
+
+```
+garcm0b@KW20207:/data/ETD_rag/markdown$ sudo ufw status verbose
+Status: active
+Logging: on (low)
+Default: deny (incoming), allow (outgoing), deny (routed)
+New profiles: skip
+
+To                         Action      From
+--                         ------      ----
+11434                      ALLOW IN    Anywhere
+22/tcp (OpenSSH)           ALLOW IN    Anywhere
+53/tcp                     ALLOW IN    Anywhere                   # Open port DNS tcp port 53
+53/udp                     ALLOW IN    Anywhere                   # Open port DNS udp port 53
+3306/tcp                   ALLOW IN    Anywhere                   # Open port MySQL tcp port 3306
+3306/udp                   ALLOW IN    Anywhere                   # Open port MySQL udp port 3306
+
+garcm0b@KW20207:/data/ETD_rag/markdown$
+```
+
+Can you double check the firewall is allowing traffic from the workstation to the `lthlibdb`? Or if you have another suggestion, let me know.
+
+
